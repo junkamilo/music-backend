@@ -4,7 +4,10 @@ import com.musicplatform.backend_core.artist.entity.ArtistProfile;
 import com.musicplatform.backend_core.artist.entity.ArtistType;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,4 +28,14 @@ public interface ArtistProfileRepository extends JpaRepository<ArtistProfile, Lo
     );
 
     List<ArtistProfile> findByArtistTypeAndActiveTrueOrderByStageNameAsc(ArtistType artistType);
+
+    @Query("""
+            SELECT ap FROM ArtistProfile ap, User u
+            WHERE ap.userId = u.id
+              AND u.role = com.musicplatform.backend_core.shared.enums.UserRole.CREATOR
+              AND ap.artistType = com.musicplatform.backend_core.artist.entity.ArtistType.INDEPENDENT
+              AND ap.active = true
+            ORDER BY ap.createdAt DESC
+            """)
+    Page<ArtistProfile> findRecentIndependentCreators(Pageable pageable);
 }

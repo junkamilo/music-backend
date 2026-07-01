@@ -35,6 +35,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**", "/hola").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/artist-profiles/featured").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/artist-profiles/{id:\\d+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/artists/highlighted").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/artists/{id:\\d+}/inspired-creators").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,6 +1,9 @@
 package com.musicplatform.backend_core.spotify.mapper;
 
-import com.musicplatform.backend_core.spotify.dto.external.SpotifyArtistObject;
+import com.musicplatform.backend_core.spotify.dto.external.SpotifyExternalUrls;
+import com.musicplatform.backend_core.spotify.dto.external.SpotifyFullArtistObject;
+import com.musicplatform.backend_core.spotify.dto.external.SpotifyImage;
+import com.musicplatform.backend_core.spotify.dto.external.SpotifySimplifiedArtistObject;
 import com.musicplatform.backend_core.spotify.dto.response.SpotifyArtistResponse;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -8,30 +11,44 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpotifyArtistMapper {
 
-    public SpotifyArtistResponse toResponse(SpotifyArtistObject artist) {
+    private static final String ARTIST_TYPE = "artist";
+
+    public SpotifyArtistResponse toResponse(SpotifyFullArtistObject artist) {
         return new SpotifyArtistResponse(
+                resolveExternalUrls(artist.getExternalUrls()),
+                artist.getHref(),
                 artist.getId(),
+                resolveImages(artist.getImages()),
                 artist.getName(),
-                resolveImageUrl(artist),
-                artist.getGenres() != null ? artist.getGenres() : List.of(),
-                resolveFollowers(artist),
-                artist.getPopularity(),
-                resolveSpotifyUrl(artist)
+                resolveType(artist.getType()),
+                artist.getUri()
         );
     }
 
-    private String resolveImageUrl(SpotifyArtistObject artist) {
-        if (artist.getImages() == null || artist.getImages().isEmpty()) {
-            return null;
-        }
-        return artist.getImages().get(0).getUrl();
+    /**
+     * Mapeo de respaldo cuando el endpoint de artistas completos no está disponible (p. ej. Dev Mode).
+     */
+    public SpotifyArtistResponse toResponseFromSimplified(SpotifySimplifiedArtistObject artist) {
+        return new SpotifyArtistResponse(
+                resolveExternalUrls(artist.getExternalUrls()),
+                artist.getHref(),
+                artist.getId(),
+                resolveImages(artist.getImages()),
+                artist.getName(),
+                resolveType(artist.getType()),
+                artist.getUri()
+        );
     }
 
-    private Integer resolveFollowers(SpotifyArtistObject artist) {
-        return artist.getFollowers() != null ? artist.getFollowers().getTotal() : null;
+    private SpotifyExternalUrls resolveExternalUrls(SpotifyExternalUrls externalUrls) {
+        return externalUrls != null ? externalUrls : new SpotifyExternalUrls();
     }
 
-    private String resolveSpotifyUrl(SpotifyArtistObject artist) {
-        return artist.getExternalUrls() != null ? artist.getExternalUrls().getSpotify() : null;
+    private List<SpotifyImage> resolveImages(List<SpotifyImage> images) {
+        return images != null ? images : List.of();
+    }
+
+    private String resolveType(String type) {
+        return type != null ? type : ARTIST_TYPE;
     }
 }

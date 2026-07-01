@@ -7,6 +7,7 @@ public class SpotifyProperties {
 
     private String id;
     private String secret;
+    private String market = "US";
 
     public String getId() {
         return id;
@@ -22,5 +23,13 @@ public class SpotifyProperties {
 
     public void setSecret(String secret) {
         this.secret = secret;
+    }
+
+    public String getMarket() {
+        return market;
+    }
+
+    public void setMarket(String market) {
+        this.market = market;
     }
 }

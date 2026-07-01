@@ -13,6 +13,6 @@ public class SpotifySearchResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ArtistsPage {
-        private List<SpotifyArtistObject> items;
+        private List<SpotifySimplifiedArtistObject> items;
     }
 }
